@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: CameraSettings
   m_EditorClassIdentifier: 
   xRotationSpeed: 120
-  yRotationSpeed: 150
+  yRotationSpeed: 100

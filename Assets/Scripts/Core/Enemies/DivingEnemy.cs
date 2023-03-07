@@ -189,10 +189,14 @@ namespace ShooterBase.Core
             damageablePartComponent.MinHealthReached -= OnDeathFromBullet;
             attackContactArea.PlayerDamaged -= OnDeathFromSelfDestruction;
 
-            if (deathReason is DeathReason.DirectDamage or DeathReason.RicochetDamage)
+            if (deathReason is DeathReason.DirectDamage or DeathReason.UltimateAbility)
             {
                 _scoreService.IncreaseKilledEnemiesCounter();
-                _characterStatsService.IncreaseStat(CreatureStats.Strength, divingEnemyStats.OnKillCharacterStrengthRecovery);
+
+                if (deathReason is DeathReason.DirectDamage)
+                {
+                    _characterStatsService.IncreaseStat(CreatureStats.Strength, divingEnemyStats.OnKillCharacterStrengthRecovery);
+                }
             }
 
             OnEnemyDead?.Invoke(this);

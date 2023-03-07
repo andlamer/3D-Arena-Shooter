@@ -56,7 +56,7 @@ namespace ShooterBase.Core
             if (_cachedCharacterTransform != null)
                 EnableAI().Forget();
 
-            damageablePartComponent.MinHealthReached += OnDeath;
+            damageablePartComponent.MinHealthReached += OnDeathFromBullet;
         }
 
         private void OnDisable()
@@ -73,9 +73,10 @@ namespace ShooterBase.Core
             
             _chasingEnabled = false;
 
-            damageablePartComponent.MinHealthReached -= OnDeath;
+            damageablePartComponent.MinHealthReached -= OnDeathFromBullet;
         }
         
+        public void Kill() => OnDeath(DeathReason.UltimateAbility);
 
         private async UniTask EnableAI()
         {
@@ -93,11 +94,17 @@ namespace ShooterBase.Core
             }
         }
 
-        private void OnDeath()
+        private void OnDeathFromBullet() => OnDeath(DeathReason.DirectDamage);
+        
+        private void OnDeath(DeathReason deathReason)
         {
-            damageablePartComponent.MinHealthReached -= OnDeath;
+            damageablePartComponent.MinHealthReached -= OnDeathFromBullet;
             _scoreService.IncreaseKilledEnemiesCounter();
-            _characterStatsService.IncreaseStat(CreatureStats.Strength, bossEnemyStats.OnKillCharacterStrengthRecovery);
+            
+            if (deathReason == DeathReason.DirectDamage)
+            {
+                _characterStatsService.IncreaseStat(CreatureStats.Strength, bossEnemyStats.OnKillCharacterStrengthRecovery);
+            }
 
             if (_pool == null)
             {
@@ -109,8 +116,6 @@ namespace ShooterBase.Core
             _pool.Despawn(this);
         }
 
-        public void Kill() => OnDeath();
-        
         private void SetPool(Pool pool) => _pool = pool;
 
         public class Pool : MonoMemoryPool<Vector3, BossEnemy>
