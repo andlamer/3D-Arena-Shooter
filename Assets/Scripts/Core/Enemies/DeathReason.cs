@@ -3,8 +3,7 @@
     public enum DeathReason
     {
         DirectDamage = 0,
-        RicochetDamage = 1,
-        UltimateAbility = 2,
-        SelfDestruction = 3
+        UltimateAbility = 1,
+        SelfDestruction = 2
     }
 }
